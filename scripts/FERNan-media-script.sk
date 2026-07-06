@@ -1,0 +1,13 @@
+# FERNan Media Skripti
+command /medya:
+    trigger:
+        set {_media} to a new chest inventory with 3 row named "&8ᴍᴇᴅɪᴀ ʀᴀɴᴋ"
+        set slot 13 of {_media} to leather helmet named "<##F84A8A>🎥ᴍᴇᴅɪᴀ ʀᴀɴᴋ" with lore "<##F84A8A>Gereksinimler: (sadece biri yeterli)" and "<##F84A8A>- &fBir yayında ortalama 10 izleyici" and "<##F84A8A>- &fYouTube videosunda 300 görüntüleme"
+        open {_media} to player
+
+on inventory click:
+    if name of event-inventory is "&8ᴍᴇᴅɪᴀ ʀᴀɴᴋ":
+        cancel event
+        if event-slot = slot 13:
+            execute player command "/discord"
+            close player's inventory

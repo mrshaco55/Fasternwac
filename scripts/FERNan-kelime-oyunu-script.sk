@@ -1,0 +1,40 @@
+# FERNan Kelime Oyunu Skripti
+options:
+    prefix: §x§7§6§2§3§F§Fᴇ§x§7§B§2§A§F§Fᴛ§x§8§0§3§2§F§Fᴇ§x§8§6§3§9§F§Fʀ§x§8§B§4§0§F§Fɴ§x§9§0§4§7§F§Fᴀ§x§9§5§4§F§F§Fʟ §x§A§0§5§D§F§Fɴ§x§A§5§6§5§F§Fᴇ§x§A§A§6§C§F§Fᴛ§x§A§F§7§3§F§Fᴡ§x§B§5§7§A§F§Fᴏ§x§B§A§8§2§F§Fʀ§x§B§F§8§9§F§Fᴋ &8» &r
+    odul_komutu: crates key give %player% ekstra 1
+    süre: 15 minutes
+
+variables:
+    {kelimeoyunu.aktif} = false
+    {kelimeoyunu.kelime} = ""
+
+function kelimeOyunuBaslat():
+    set {_characters} to "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    set {_result} to ""
+    loop 8 times:
+        set {_n} to random integer between 1 and length of {_characters}
+        set {_c} to character at {_n} in {_characters}
+        set {_result} to "%{_result}%%{_c}%"
+    set {kelimeoyunu.kelime} to {_result}
+    set {kelimeoyunu.aktif} to true
+    broadcast "{@prefix} &eKelime oyunu başladı!"
+    broadcast "{@prefix} &7Aşağıdaki kodu sohbete ilk yazan kazanır:"
+    broadcast "{@prefix} &b&n&l%{kelimeoyunu.kelime}%"
+
+every {@süre}:
+    if number of all players > 0:
+        kelimeOyunuBaslat()
+
+on chat:
+    if {kelimeoyunu.aktif} is true:
+        if message is {kelimeoyunu.kelime}:
+            cancel event
+            set {kelimeoyunu.aktif} to false
+            broadcast "{@prefix} &f%player% &7kelimeyi doğru yazdı ve ödülü kazandı!"
+            execute console command "{@odul_komutu}"
+            delete {kelimeoyunu.kelime}
+
+command /kelimeoyunubaslat:
+    permission: admin.kelimeoyunu
+    trigger:
+        kelimeOyunuBaslat()

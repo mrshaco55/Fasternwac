@@ -1,0 +1,53 @@
+# FERNan Duyuru Skripti
+options:
+    p: &6&lExamplesᴍᴘ &8»
+
+command /sohbetkapat:
+    permission: example.sohbet.yonet
+    trigger:
+        set {sohbet::durum} to false
+        broadcast ""
+        broadcast "{@p} &c&lSohbet yetkili tarafından kapatıldı!"
+        broadcast "{@p} &7Artık sadece yetkililer konuşabilir."
+        broadcast ""
+        play sound "BLOCK_NOTE_BLOCK_BASS" with volume 1 and pitch 0.5 to all players
+
+command /sohbetaç:
+    permission: example.sohbet.yonet
+    trigger:
+        set {sohbet::durum} to true
+        broadcast ""
+        broadcast "{@p} &a&lSohbet tekrar aktif edildi!"
+        broadcast "{@p} &7Kurallara uyarak konuşabilirsiniz. İyi oyunlar."
+        broadcast ""
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to all players
+
+command /duyuru [<text>]:
+    permission: example.duyuru.yetki
+    trigger:
+        if arg-1 is not set:
+            send "&6KULLANIM &8» &f/duyuru <mesaj>" to player
+            stop
+        set {_mesaj} to colored arg-1
+        set {sohbet::durum} to false
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 0.8 to all players
+        send title "&e&lᴅᴜʏᴜʀᴜ" with subtitle "&a&l>> &f&l%{_mesaj}% &a&l<<" to all players for 4 seconds
+        broadcast ""
+        broadcast "         &e&lexamplᴇsᴍᴘ &8| &7sᴜɴᴜᴄᴜ ᴅᴜʏᴜʀᴜsᴜ"
+        broadcast "         &a&l>> &f&l%{_mesaj}% &a&l<<"
+        broadcast ""
+        loop 5 times:
+            set {_saniye} to 6 - loop-number
+            send action bar "&6&lexampleᴇsᴍᴘ &8» &7sᴏʜʙᴇᴛ ᴀçıʟıʏᴏʀ: &e%{_saniye}%" to all players
+            wait 1 second
+        set {sohbet::durum} to true
+        send action bar "&a&l✔ &7Sohbet kilidi kaldırıldı!" to all players
+        broadcast "         &a&l>> &7sᴏʜʙᴇᴛ ᴋıʟıᴅı ᴋᴀʟᴅıʀıʟᴅı, ᴋᴏɴᴜşᴀʙıʟıʀsıɴız."
+        play sound "UI_BUTTON_CLICK" with volume 0.5 and pitch 2 to all players
+
+on chat:
+    if {sohbet::durum} is false:
+        if player does not have permission "example.sohbet.yonet":
+            cancel event
+            play sound "BLOCK_NOTE_BLOCK_BASS" with volume 0.5 and pitch 0.5 to player
+            send action bar "&cᴇɴɢᴇʟ &8» &7Sohbet şu an kapalıdır." to player

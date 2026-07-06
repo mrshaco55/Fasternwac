@@ -1,0 +1,82 @@
+# FERNan Ayarlar Skripti
+on death:
+    clear victim's inventory
+
+on bed enter:
+    execute console command "time set day world"
+
+on respawn:
+    wait 2 ticks
+    if {spawn.loc} is set:
+        teleport player to {spawn.loc}
+    give stone sword to player
+    give chainmail helmet to player
+    give chainmail chestplate to player
+    give chainmail leggings to player
+    give chainmail boots to player
+    give 16 cooked beef to player
+    send "§a§lYeniden doğduğun için başlangıç kiti verildi." to player
+
+on first join:
+    wait 2 ticks
+    if {spawn.loc} is set:
+        teleport player to {spawn.loc}
+    clear player's inventory
+    give stone sword to player
+    give chainmail helmet to player
+    give chainmail chestplate to player
+    give chainmail leggings to player
+    give chainmail boots to player
+    give 16 cooked beef to player
+
+command /baslangicayarla:
+    permission: op
+    trigger:
+        set {spawn.loc} to location of player
+        send "§aSpawn başarıyla ayarlandı." to player
+
+on quit:
+    set {lastloc::%uuid of player%} to location of player
+
+on join:
+    wait 2 ticks
+    if player has not played before:
+        if {spawn.loc} is set:
+            teleport player to {spawn.loc}
+        stop
+    set {_world} to {lastloc::%uuid of player%}'s world
+    if "%{_world}%" is "NewSpawn":
+        if {spawn.loc} is set:
+            teleport player to {spawn.loc}
+    else:
+        if {lastloc::%uuid of player%} is set:
+            teleport player to {lastloc::%uuid of player%}
+
+command /spawn:
+    trigger:
+        if {spawn.loc} is not set:
+            send "§cSpawn ayarlanmamış." to player
+            stop
+        if {spawning::%uuid of player%} is set:
+            send "§cZaten ışınlanıyorsun." to player
+            stop
+        set {spawning::%uuid of player%} to true
+        set {spawn.startloc::%uuid of player%} to location of player
+        loop 5 times:
+            set {_left} to 6 - loop-number
+            if {spawning::%uuid of player%} is not set:
+                stop
+            if distance between location of player and {spawn.startloc::%uuid of player%} > 0.15:
+                delete {spawning::%uuid of player%}
+                delete {spawn.startloc::%uuid of player%}
+                send action bar "§cİptal edildi (hareket ettin)"
+                stop
+            send action bar "§b%{_left}% saniye sonra spawn..."
+            play sound "block.note_block.hat" to player
+            wait 1 second
+        if {spawning::%uuid of player%} is set:
+            teleport player to {spawn.loc}
+            send action bar "§aSpawn'a ışınlandın"
+            play sound "entity.enderman.teleport" to player
+        delete {spawning::%uuid of player%}
+        delete {spawn.startloc::%uuid of player%}

@@ -1,0 +1,55 @@
+# FERNan Çekiliş Skripti
+options:
+    prefix: &3EXAPMLESmp &8» &r
+    sound_start: BLOCK_NOTE_BLOCK_PLING
+    sound_tick: BLOCK_NOTE_BLOCK_HAT
+    sound_win: UI_TOAST_CHALLENGE_COMPLETE
+
+command /çekiliş [<int>] [<int>] [<text>]:
+    permission: example.cekilis.admin
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix} &cLütfen süreyi (saniye) gir!"
+            stop
+        if arg-2 is not set:
+            send "{@prefix} &cKaç kişinin kazanacağını gir!"
+            stop
+        if arg-3 is not set:
+            send "{@prefix} &cÖdül ismini girmeyi unuttun!"
+            stop
+        set {_sure} to arg-1
+        set {_kazanacak_sayisi} to arg-2
+        set {_odul} to arg-3
+        set {_players::*} to all players
+        set {_total_players} to size of {_players::*}
+        if {_total_players} < {_kazanacak_sayisi}:
+            send "{@prefix} &cSunucuda yeterli oyuncu yok!"
+            stop
+        broadcast ""
+        broadcast " &6&l🎉 ÇEKİLİŞ BAŞLADI!"
+        broadcast " &eÖdül: &f%{_odul}%"
+        broadcast " &eKazanan Sayısı: &f%{_kazanacak_sayisi}% Kişi"
+        broadcast " &eSüre: &f%{_sure}% Saniye"
+        broadcast ""
+        play sound "{@sound_start}" with volume 1 and pitch 1 to all players
+        loop {_sure} times:
+            send action bar "&6&lÇEKİLİŞ &8▪ &fSon &e%{_sure}% &fsaniye..." to all players
+            if {_sure} <= 5:
+                send title "&c&l%{_sure}%" with subtitle "&eÇekiliş açıklanıyor..." to all players
+                play sound "{@sound_tick}" with volume 1 and pitch 2 to all players
+            remove 1 from {_sure}
+            wait 1 second
+        loop {_kazanacak_sayisi} times:
+            set {_winner} to random element of {_players::*}
+            add {_winner} to {_kazananlar::*}
+            remove {_winner} from {_players::*}
+        send title "&6&lKAZANANLAR BELLİ OLDU!" with subtitle "&fChat'e bak!" to all players
+        play sound "{@sound_win}" with volume 1 and pitch 1 to all players
+        broadcast ""
+        broadcast " &6&l🏆 ÇEKİLİŞ SONUCU"
+        broadcast " &7Ödül: &e%{_odul}%"
+        broadcast ""
+        broadcast " &a&lKAZANANLAR:"
+        loop {_kazananlar::*}:
+            broadcast "  &8► &b%loop-value%"
+        broadcast ""

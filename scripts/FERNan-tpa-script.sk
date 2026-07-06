@@ -1,0 +1,53 @@
+# FERNan TPA Skripti
+options:
+    prefix: &r
+
+variables:
+    {tpa.request.%player%} = none
+    {tpa.type.%player%} = none
+    {tpa.sender.%player%} = none
+    {tpa.toggle.%player%} = true
+    {tpa.auto.%player%} = false
+    {tpa.teleporting.%player%} = false
+    {tpa.location.%player%} = none
+
+command /tpa <player>:
+    trigger:
+        if arg-1 is player:
+            send "{@prefix}&7ʏᴏᴜ ᴄᴀɴɴᴏᴛ ꜱᴇɴᴅ ᴀ ᴛᴘᴀ ʀᴇQᴜᴇꜱᴛ ᴛᴏ ʏᴏᴜʀꜱᴇʟꜰ"
+            stop
+        if arg-1 is online:
+            set {_target} to arg-1
+            if {tpa.toggle.%{_target}%} is false:
+                send "{@prefix}&7ᴛʜɪꜱ ᴘʟᴀʏᴇʀ ʜᴀꜱ ᴛᴜʀɴ ᴏꜰꜰ ᴛᴘᴀ ʀᴇQᴜᴇꜱᴛ"
+                stop
+            set {_gui} to a new chest inventory with 3 rows named "&6TPA Request"
+            set slot 10 of {_gui} to red stained glass pane named "&c&lᴄᴀɴᴄᴇʟ"
+            set slot 13 of {_gui} to {_target}'s skull named "&2&lᴘʟᴀʏᴇʀ" with lore "&7%{_target}%"
+            set slot 16 of {_gui} to lime stained glass pane named "&a&lᴄᴏɴꜰɪʀᴍ"
+            open {_gui} to player
+            play sound "ui.button.click" to player
+            set {tpa.pending.%player%} to {_target}
+        else:
+            send "{@prefix}&7ᴛʜɪꜱ ᴘʟᴀʏᴇʀ ɪꜱ ɴᴏᴛ ᴏɴʟɪɴᴇ"
+
+command /tpaccept:
+    trigger:
+        if {tpa.request.%player%} is set:
+            set {_sender} to {tpa.request.%player%}
+            send "{@prefix}&7ʏᴏᴜ ᴀᴄᴄᴇᴘᴛᴇᴅ ᴛʜᴇ ᴛᴘᴀ" to player
+            play sound "entity.player.levelup" to player
+            teleport {_sender} to player
+            play sound "entity.enderman.teleport" to {_sender}
+            delete {tpa.request.%player%}
+        else:
+            send "{@prefix}&7ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ᴛᴘᴀ ʀᴇQᴜᴇꜱᴛ"
+
+command /tpatoggle:
+    trigger:
+        if {tpa.toggle.%player%} is true:
+            set {tpa.toggle.%player%} to false
+            send "{@prefix}&7ᴛᴘᴀ ʀᴇQᴜᴇꜱᴛ : &cᴏꜰꜰ"
+        else:
+            set {tpa.toggle.%player%} to true
+            send "{@prefix}&7ᴛᴘᴀ ʀᴇQᴜᴇꜱᴛ : &9ᴏɴ"
